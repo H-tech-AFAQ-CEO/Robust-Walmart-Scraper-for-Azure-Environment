@@ -1,0 +1,22 @@
+[project]
+name = "walmart-scraper"
+version = "1.0.0"
+description = "Production-grade Walmart catalog and deal scraper for Azure Container Apps"
+authors = [
+    { name = "Zulqarnain Ahmad", email = "zulqarnaina43@freelancer.com" },
+    { name = "Afaq Ahmad", email = "afaqceo@freelancer.com" }
+]
+dependencies = [
+    "playwright==1.56.0",
+    "azure-storage-blob==12.23.1",
+    "azure-identity==1.19.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8"
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "store_1",
+    "zipcode": "72712",
+    "store_id": "100",
+    "store_name": "Walmart Supercenter #100",
+    "store_location": "Bentonville, AR",
+    "store_logo": "",
+    "canaries": []
+  }
+]
