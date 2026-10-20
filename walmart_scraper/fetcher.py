@@ -5,8 +5,9 @@ In collaboration with team leader: Afaq Ahmad (Freelancer: https://www.freelance
 Page fetching. BrowserFetcher uses Playwright; anything with .fetch()/.start()/.close() works.
 """
 from __future__ import annotations
-import json, logging, random, time
+import json, logging, random, re, time
 from dataclasses import dataclass, field
+from pathlib import Path
 
 log = logging.getLogger("ws.fetch")
 
@@ -39,8 +40,10 @@ def classify(status: int, url: str, html_lower: str, nd) -> tuple[bool, str]:
 
 
 class BrowserFetcher:
-    def __init__(self, settings, location):
+    def __init__(self, settings, location, capture_raw: bool = False, raw_dir: str = "raw"):
         self.s, self.loc = settings, location
+        self.capture_raw = capture_raw or settings.capture_raw
+        self.raw_dir = Path(raw_dir)
         self._pw = self._browser = self.ctx = self.page = None
 
     def start(self):
@@ -68,6 +71,7 @@ class BrowserFetcher:
     def fetch(self, url: str, want_links: bool = False) -> Page:
         t0 = time.time()
         pg = Page(url=url)
+        html = ""
         try:
             resp = self.page.goto(url, wait_until="domcontentloaded", timeout=60000)
             pg.status = resp.status if resp else 0
@@ -84,6 +88,8 @@ class BrowserFetcher:
             nd = json.loads(raw) if raw else None
             pg.blocked, pg.reason = classify(pg.status, self.page.url, html.lower(), nd)
             pg.next_data = nd
+            if self.capture_raw:
+                self._save_raw(pg, html, nd)
             if want_links and not pg.blocked:
                 pg.sub_links = self.page.evaluate(
                     """() => [...document.querySelectorAll('a[href*="/browse/"],a[href*="/cp/"]')]
@@ -95,6 +101,24 @@ class BrowserFetcher:
             pg.blocked, pg.reason = True, f"exception:{type(e).__name__}"
         pg.latency = time.time() - t0
         return pg
+
+    def _save_raw(self, pg: Page, html: str, nd):
+        """Persist raw HTML + __NEXT_DATA__ as machine-readable evidence."""
+        try:
+            safe = re.sub(r"[^A-Za-z0-9._-]", "_", pg.url)[:120]
+            ts = time.strftime("%Y%m%dT%H%M%S", time.gmtime())
+            d = self.raw_dir / self.loc.id / ts
+            d.mkdir(parents=True, exist_ok=True)
+            (d / f"{safe}.html").write_text(html, encoding="utf-8")
+            if nd is not None:
+                (d / f"{safe}.next_data.json").write_text(
+                    json.dumps(nd, ensure_ascii=False), encoding="utf-8")
+            (d / f"{safe}.meta.json").write_text(
+                json.dumps({"url": pg.url, "status": pg.status, "blocked": pg.blocked,
+                            "reason": pg.reason, "latency": pg.latency},
+                           ensure_ascii=False), encoding="utf-8")
+        except Exception as e:
+            log.warning("raw capture failed: %s", e)
 
     def screenshot(self, path: str):
         try:

@@ -51,6 +51,7 @@ class Settings:
     min_canary_ratio: float = 0.60
     min_completeness: float = 0.98
     config_dir: str = "config"
+    capture_raw: bool = False        # save raw HTML + __NEXT_DATA__ per request (evidence)
 
     @classmethod
     def from_env(cls) -> "Settings":

@@ -106,23 +106,16 @@ def _item_id(it: dict) -> str:
 
 
 def local_offer_check(it: dict) -> tuple[bool, str]:
-    """True only for Walmart-sold items fulfillable via local pickup / in-store."""
+    """Keep every product regardless of stock status or pickup/delivery/purchase availability.
+    Availability must never filter or delete products. Only third-party marketplace offers
+    are excluded (they are not Walmart prices). Fulfillment context is still read from the
+    source payload and recorded, never used to drop a record."""
     seller = str(it.get("sellerName") or "").strip().lower()
     if seller not in WALMART_SELLERS:
         return False, "marketplace"
     if it.get("isMarketplace") or it.get("marketplaceItem"):
         return False, "marketplace"
-    blob = " ".join(str(x).lower() for x in (
-        it.get("fulfillmentBadgeGroups"), it.get("fulfillmentBadge"), it.get("fulfillmentType"),
-        it.get("fulfillmentSummary"), it.get("fulfillmentLabel"), it.get("availabilityStatusV2"),
-        it.get("fulfillmentSpeed")))
-    if not blob.strip("none[] {}"):
-        return False, "no_fulfillment_info"
-    if "out_of_stock" in blob or "out of stock" in blob:
-        return False, "out_of_stock"
-    if any(w in blob for w in ("pickup", "pick up", "in-store", "in store", "instore", "store_pickup")):
-        return True, ""
-    return False, "shipping_only"
+    return True, ""
 
 
 def _collect_promo_texts(it: dict) -> list[str]:

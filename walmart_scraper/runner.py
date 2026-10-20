@@ -184,6 +184,7 @@ class Job:
             cp.counters[f"rejected_{why}"] += 1
             return
         cp.records[iid] = rec
+        cp.counters["records_fresh_this_run"] += 1
         node["kept"] += 1
         cp.sponsored_only.pop(iid, None)
 
@@ -247,6 +248,8 @@ class Job:
             "runtime_seconds": round(active), "total": len(out),
             "by_category": dict(Counter(r["category"] for r in out)),
             "by_sub_category": dict(Counter(f"{r['category']} > {r['sub_category']}" for r in out)),
+            "records_fresh_this_run": cp.counters.get("records_fresh_this_run", 0),
+            "records_total_unique": len(out),
             "counters": dict(cp.counters), "deal_stats": dict(deals),
             "nodes": {"total": len(cp.nodes), "failed": [k for k, n in cp.nodes.items() if n["status"] == "failed"]},
             "validation": v,

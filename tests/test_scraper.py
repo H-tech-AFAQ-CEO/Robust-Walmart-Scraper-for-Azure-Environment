@@ -50,8 +50,11 @@ def test_parse_rules():
     rec, _ = P.parse_item(item(2, priceInfo={"currentPrice": {"price": 2.0}, "wasPrice": {"price": 3}}), "F", "", LOC, "d")
     assert (rec["regular_price"], rec["sale_price"], rec["ppm"]) == ("3.00", "2.00", "")
     assert P.parse_item(item(3, sellerName="SomeSeller"), "F", "", LOC, "d")[1] == "marketplace"
-    assert P.parse_item(item(4, fulfillmentBadgeGroups=[{"text": "Shipping, arrives tomorrow"}]), "F", "", LOC, "d")[1] == "shipping_only"
-    assert P.parse_item(item(5, fulfillmentBadgeGroups=None), "F", "", LOC, "d")[1] == "no_fulfillment_info"
+    # availability must never filter/delete: shipping-only and missing-fulfillment items are retained
+    rec4, why4 = P.parse_item(item(4, fulfillmentBadgeGroups=[{"text": "Shipping, arrives tomorrow"}]), "F", "", LOC, "d")
+    assert why4 == "" and rec4 is not None
+    rec5, why5 = P.parse_item(item(5, fulfillmentBadgeGroups=None), "F", "", LOC, "d")
+    assert why5 == "" and rec5 is not None
     assert P.parse_item(item(6, weight="approx. 2 lb"), "F", "", LOC, "d")[1] == "approx_weight"
     rec, _ = P.parse_item(item(7, brand="Acme", name="Acme Chips 8 oz"), "F", "", LOC, "d")
     assert rec["store_brand"] == "no"
