@@ -75,3 +75,17 @@ Missing values are empty strings (never `null`). `gupc` and `unit_price` are alw
 - `LIVE_RUN_PLAN.md` — concrete plan for the qualifying live 500-product run (residential proxy, selector calibration, full category traversal, repeat-run/resume/Azure verification).
 
 See `docs/OPERATIONS.md`, `docs/WALKTHROUGH.md`, `ARCHITECTURE.md`, `CONTEST_ENTRY.md` for full details.
+
+---
+
+## Access needed to run live (client grant)
+
+To execute the scraper fully and reach the qualifying 500+ genuine live product run, the following access/grants are required:
+
+1. **Azure environment access** — Contributor rights to the target resource group so the Container Apps Job, ACR image, Storage account, and Managed Identity can be deployed via `infra/main.bicep` (local run credentials acceptable for initial on-prem validation).
+2. **Residential/sticky proxy** — Walmart blocks datacenter IPs with a bot challenge (confirmed in `evidence/failed_probe_20261020.log`). Provide a `WS_PROXY_URL` (US residential/sticky) as a secret; it is never stored in source code.
+3. **Walmart store identifiers** — Confirm `store_id`, `zipcode`, and pickup store for each location in `config/locations.json` so store/fulfillment context verifies against actual Walmart responses.
+4. **Canary product IDs** (optional but recommended) — 10–20 `usItemId`s expected in each store's catalog for silent-blocking / yield validation.
+5. **Schedule approval** — Twice-weekly cron (`0 8 * * 1,4` UTC by default) per configured location.
+
+No production credentials should be shared in public channels — send them via your secure preferred method. Once these are in place, I'll calibrate store selectors against live Walmart, run full category traversal, and deliver the 500+ record live dataset with raw response evidence.
