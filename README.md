@@ -89,3 +89,31 @@ To execute the scraper fully and reach the qualifying 500+ genuine live product 
 5. **Schedule approval** — Twice-weekly cron (`0 8 * * 1,4` UTC by default) per configured location.
 
 No production credentials should be shared in public channels — send them via your secure preferred method. Once these are in place, I'll calibrate store selectors against live Walmart, run full category traversal, and deliver the 500+ record live dataset with raw response evidence.
+
+---
+
+## Client execution plan — Walmart #44 (Oct 21 follow-up)
+
+Acknowledged deliverables, tracked separately:
+
+1. **Source identification** — exact repository commit SHA for the retailer implementation, plus the original network failure log, timestamp, endpoint/request context, and error details.
+   - Latest commit on `main`: `b769c00` (README client-access section); prior `2e4f70f` (availability fix + raw evidence + live-run plan); initial `44ec542`.
+   - Original failure log: `evidence/failed_probe_20261020.log` — HTTP 200 but bot-challenge page, `__NEXT_DATA__` absent, `items_found: 0`, `store_context` empty, `reason: bot_challenge`, against `https://www.walmart.com/cp/food/976759?povid=GlobalNav_rWeb_Grocery_GroceryShopAll`.
+
+2. **Live location verification** — evidence from actual store and fulfillment responses confirming data belongs to the configured Walmart store (e.g. store #44), not headers or configured labels alone.
+
+3. **500-product demonstration** — 500 genuine products from the intended source, excluding coupon-only placeholders, with supporting response evidence and reproducible collection logs.
+
+4. **Schema and data-quality validation** — exact 22-field order, empty strings for missing values, blank `gupc` and `unit_price`, directly scraped PPM, exclusion of approximate-weight products, preserved bulk/family-pack/multipack identities and sizes, separate volume and digital quantity/clipping/eligibility terms.
+
+5. **Availability and recovery evidence** — temporarily unavailable products retained from the store's assortment; fresh observations distinguished from carried-forward historical evidence; recovery reported only after observed.
+
+6. **Coverage and Azure status** — separate evidence for full uncapped production traversal, twice-weekly collection per store, and Azure execution/deployment acceptance.
+
+**Remaining blocker:** genuine live collection and response-bound store verification are unconfirmed. The exact commit, failure log, and environment access requirements must be established before a reliable live-run commitment.
+
+**Environment prerequisites:** repository/commit-history access, approved execution environment, network connectivity and retailer endpoint access, secure credential configuration, and minimum permissions to inspect logs and execute tests. Azure credentials/deployment permissions required separately if Azure acceptance is in scope.
+
+**Timeline:** source/failure-log and prerequisite assessment within 1 business day after access is available; realistic live 500-product demonstration date confirmed after connectivity is verified. Full uncapped coverage, observed recovery, and Azure acceptance are separate milestones — not all covered by a 2–3 business-day estimate unless scope and access are confirmed.
+
+No claim of successful live collection or Azure acceptance is made at this stage.
