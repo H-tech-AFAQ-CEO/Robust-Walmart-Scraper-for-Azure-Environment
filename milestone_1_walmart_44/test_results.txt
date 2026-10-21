@@ -1,0 +1,62 @@
+# Test Results — Walmart #44 Milestone 1
+
+**Command executed:** `py -m pytest -v`  
+**Working directory:** `C:\Users\Afaq\Desktop\walmart-scraper`  
+**Python:** 3.12.10 (`C:\Users\Afaq\AppData\Local\Programs\Python\Python312\python.exe`)  
+**pytest:** 9.1.1  
+**Playwright:** 1.56.0 (chromium installed)
+
+## Full test output
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\Afaq\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Afaq\Desktop\walmart-scraper
+configfile: pyproject.toml
+collecting ... collected 8 items
+
+tests/test_scraper.py::test_deals PASSED                                 [ 12%]
+tests/test_scraper.py::test_parse_rules PASSED                           [ 25%]
+tests/test_scraper.py::test_end_to_end_dedupe_and_publish PASSED         [ 37%]
+tests/test_scraper.py::test_store_mismatch_aborts_and_publishes_nothing PASSED [ 50%]
+tests/test_scraper.py::test_blocked_run_never-replaces-good-data PASSED  [ 62%]
+tests/test_scraper.py::test_thin_run_fails_validation_keeps_latest PASSED [ 75%]
+tests/test_scraper.py::test_resume_continues_without-refetching PASSED   [ 87%]
+tests/test_scraper.py::test_lock_prevents_overlap PASSED                 [ 100%]
+
+============================== 8 passed in 1.31s ==============================
+```
+
+## Summary
+
+| Metric | Value |
+|--------|-------|
+| Tests collected | 8 |
+| Tests passed | 8 |
+| Tests failed | 0 |
+| Tests skipped | 0 |
+| Tests not run | 0 |
+| Exit code | 0 |
+| Wall time | ~1.31s |
+
+## Mock/fixture/synthetic usage
+
+All 8 tests in `tests/test_scraper.py` use **mocks, fixtures, and synthetic responses**:
+- A `Fake` fetcher class returns hard-coded synthetic `__NEXT_DATA__` payloads (e.g. "Great Value Thing N", synthetic prices, synthetic store context `storeId: "100"`, `postalCode: "72712"`).
+- No test contacts walmart.com or any live retailer endpoint.
+- `conftest`-style `autouse` fixture monkeypatches `runner.backoff_sleep` to a no-op.
+
+## Interpretation
+
+- These tests validate **offline logic only** (deal classification, parsing rules, deduplication, store-mismatch abort, blocked-run protection, thin-run validation, resume, lock overlap).
+- Successful offline tests do **not** establish live connectivity, real store verification, or production collection.
+- No test output represents live Walmart data.
+
+## Genuine products from intended Walmart source
+
+None. No dataset in the repository contains genuine Walmart products.
+
+## Previous live execution supported by verifiable saved evidence
+
+None. The `output/latest/store_1/` and `state/store_1/` artifacts (6 records, `runtime_seconds: 0`) are from the synthetic offline test run, not a live Walmart execution.

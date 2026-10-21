@@ -1,0 +1,55 @@
+# Source Commit Record — Walmart #44 Milestone 1
+
+**Repository URL:** https://github.com/H-tech-AFAQ-CEO/Robust-Walmart-Scraper-for-Azure-Environment.git  
+**Current branch:** `main`  
+**Exact current commit SHA:** `ede5bfedceb3c850d0ff8289d02ba954d363bd44`  
+**Commit date:** 2026-10-20 22:06:26 -0700  
+**Commit message:** "Add client execution plan and Walmart #44 deliverables to README"  
+**Working-tree status:** Clean (no uncommitted changes; `git status` reports "nothing to commit, working tree clean")  
+**Tracking:** Branch `main` is up to date with `origin/main`  
+**Remote:** origin = https://github.com/H-tech-AFAQ-CEO/Robust-Walmart-Scraper-for-Azure-Environment.git (fetch + push)  
+**Commit independently verifiable:** Yes — from local `.git` metadata and `git log` output.
+
+---
+
+## Recent commit history (`git log --oneline -10`)
+
+```
+ede5bfe Add client execution plan and Walmart #44 deliverables to README
+b769c00 Add client access requirements section to README
+b621e0d Update README with status, availability fix, raw evidence, live-run plan, and repo pointer
+2e4f70f Fix availability filtering + raw evidence + live-run plan
+44ec542 Initial commit: complete production Walmart scraper source for Azure
+```
+
+## Last commit that changed the Walmart collection implementation
+
+**SHA:** `2e4f70fc41d44f81688a3df44cd924908502adb9`  
+**Date:** 2026-10-19 22:41:16 -0700  
+**Message:** "Fix availability filtering + raw evidence + live-run plan"  
+**Files changed:**
+- `walmart_scraper/config.py` (added `capture_raw` setting)
+- `walmart_scraper/fetcher.py` (added `capture_raw`/raw HTML + `__NEXT_DATA__` persistence; guard raw capture for blocked pages)
+- `walmart_scraper/parser.py` (removed availability/stock/fulfillment filtering; only marketplace excluded; unavailable products retained)
+- `walmart_scraper/runner.py` (added `records_fresh_this_run` counter; `records_total_unique` in report)
+- `tests/test_scraper.py` (updated `test_parse_rules` for availability retention)
+- `LIVE_RUN_PLAN.md` (new)
+- `evidence/failed_probe_20261020.log` (new)
+- `raw/store_1/20261020T054018/*.html,*.meta.json` (new)
+
+## Distinction: current HEAD vs. last implementation change
+
+Current HEAD `ede5bfe` only modified `README.md`. It did **not** touch any collection logic. The Walmart collection implementation is fixed at commit `2e4f70f`. The "current commit" for the implementation is therefore `2e4f70f`, while the repository HEAD is `ede5bfe`.
+
+## Verification commands used
+
+- `git status` — clean working tree
+- `git branch -v` — `* main ede5bfe ...`
+- `git remote -v` — origin fetch/push URL
+- `git log --oneline -10` — commit history
+- `git rev-parse HEAD` — `ede5bfedceb3c850d0ff8289d02ba954d363bd44`
+- `git log -1 --format="%H %ci %s"` — commit date/message
+- `git log --oneline --all -- walmart_scraper/` — implementation change history
+- `git log -1 --format="%H %ci %s" -- walmart_scraper/` — `2e4f70f...`
+
+No commit SHA was manufactured. All values come from local Git metadata.
